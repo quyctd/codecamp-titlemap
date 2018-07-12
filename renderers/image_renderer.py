@@ -3,6 +3,7 @@ import pygame
 class ImageRenderer:
     def __init__(self, image_url):
         self.image = pygame.image.load(image_url)
+        self.image = pygame.transform.scale(self.image, (32, 32))
 
     def render(self, canvas, x, y):
         width = self.image.get_width()

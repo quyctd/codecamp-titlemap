@@ -36,15 +36,17 @@ class Player():
         self.x = x
         self.y = y
         self.vel = 8
-        self.width = 32
+        self.width = 25
         self.height = 32
-        self.renderer = ImageRenderer("assets/images/sprite/jet0000.png")
-        self.box_collider = BoxCollider(28, 32)
+        self.renderer = ImageRenderer("assets/images/sprite/player.png")
+        
+        self.box_collider = BoxCollider(25, 32)
         self.is_active = True
         self.input_manager = input_manager
         self.isJump = False
         self.jumpCount = 5
         self.count = 0
+        self.move = True
     
     def update(self):
         if self.box_collider is not None:
@@ -77,7 +79,7 @@ class Player():
                             if object.y < self.y:
                                 continue
                             if dy <= self.y:
-                                self.y = dy
+                                   self.y = dy
                         self.jumpCount = -5
                 self.jumpCount -= 1
             else:
@@ -89,9 +91,17 @@ class Player():
                 list_collide = game_object.collide_with(self.box_collider, Grass)
                 for object in list_collide:
                     
-                    dy = object.y - 32
-                    if dy <= self.y:
-                        self.y = dy
+                    if self.box_collider.y == object.y:
+                        if self.x >= object.x:
+                            self.x += 1
+                        elif self.x < object.x:
+                            self.x -= 1
+                        pass
+                    else:
+                        self.move = True
+                        dy = object.y - 32
+                        if dy <= self.y:
+                            self.y = dy
                 
             elif len(game_object.collide_with(self.box_collider, Spike)) != 0:
                 self.is_active = False
@@ -107,8 +117,12 @@ class Player():
             else:
                 for object in game_object.game_objects:
                     if (object.x <= self.x <= object.x + 32 or object.x <= self.x + self.width <= object.x + 32) and self.y < object.y:
-                        self.y = object.y - 32
-                        break
+                        if self.x + 32 == object.x:
+                            continue
+                        else:
+                            self.y = object.y - 32
+                            
+                            break
 
     def render(self, canvas):
         if self.renderer is not None:
@@ -119,7 +133,7 @@ class Player():
     def deactivate(self):
         self.is_active = False
 
-man = Player(4 *32, 10 * 32, input_manager)
+man = Player(4 * 32, 10 * 32, input_manager)
 game_object.add(man)
 
 generate_map('assets/maps/map.json')
